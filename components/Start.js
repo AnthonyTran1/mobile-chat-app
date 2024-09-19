@@ -11,11 +11,12 @@ import {
 import { useState } from "react";
 
 const image = { uri: require("../assets/Background-Image.png") };
-const icon = { uri: require("../assets/user-icon.png") };
+const icon = require("../assets/user-icon.png");
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#090C08");
+  const [selectedColor, setSelectedColor] = useState();
 
   return (
     <ImageBackground
@@ -36,12 +37,12 @@ const Start = ({ navigation }) => {
       >
         <View style={[styles.textInputContainer]}>
           <Image style={styles.imageBackground} source={icon} />
-          {/* <TextInput
-              style={styles.textInput}
-              value={name}
-              onChangeText={setName}
-              placeholder="Your Name"
-            /> */}
+          <TextInput
+            style={styles.textInput}
+            value={name}
+            onChangeText={setName}
+            placeholder="Your Name"
+          />
         </View>
 
         <View
@@ -54,20 +55,48 @@ const Start = ({ navigation }) => {
           <Text style={styles.chooseBGColor}>Choose Background Color:</Text>
           <View style={[styles.backgroundContainer]}>
             <TouchableOpacity
-              style={[styles.backgroundColor, styles.color1]}
-              onPress={() => setBackgroundColor("#090C08")}
+              style={[
+                styles.backgroundColor,
+                styles.color1,
+                selectedColor === "#090C08" && styles.focused,
+              ]}
+              onPress={() => {
+                setBackgroundColor("#090C08");
+                setSelectedColor("#090C08");
+              }}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={[styles.backgroundColor, styles.color2]}
-              onPress={() => setBackgroundColor("#474056")}
+              style={[
+                styles.backgroundColor,
+                styles.color2,
+                selectedColor === "#474056" && styles.focused,
+              ]}
+              onPress={() => {
+                setBackgroundColor("#474056");
+                setSelectedColor("#474056");
+              }}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={[styles.backgroundColor, styles.color3]}
-              onPress={() => setBackgroundColor("#8A95A5")}
+              style={[
+                styles.backgroundColor,
+                styles.color3,
+                selectedColor === "#8A95A5" && styles.focused,
+              ]}
+              onPress={() => {
+                setBackgroundColor("#8A95A5");
+                setSelectedColor("#8A95A5");
+              }}
             ></TouchableOpacity>
             <TouchableOpacity
-              style={[styles.backgroundColor, styles.color4]}
-              onPress={() => setBackgroundColor("#B9C6AE")}
+              style={[
+                styles.backgroundColor,
+                styles.color4,
+                selectedColor === "#B9C6AE" && styles.focused,
+              ]}
+              onPress={() => {
+                setBackgroundColor("#B9C6AE");
+                setSelectedColor("#B9C6AE");
+              }}
             ></TouchableOpacity>
           </View>
         </View>
@@ -111,15 +140,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   textInput: {
-    width: "88%",
-    padding: 15,
+    position: "relative",
+    height: 50,
     borderWidth: 1,
-    marginTop: 15,
-    marginBottom: 15,
-    fontSize: 16,
-    fontWeight: 300,
-    color: "#757083",
-    opacity: 0.5,
+    borderColor: "#ccc",
+    paddingHorizontal: 10,
+    zIndex: 1,
+    paddingLeft: 50,
+    width: "100vw%",
   },
   backgroundColor: {
     backgroundColor: "#DDDDDD",
@@ -161,11 +189,20 @@ const styles = StyleSheet.create({
     color: "#757083",
   },
   textInputContainer: {
-    flexDirection: "row",
-    paddingBottom: 10,
+    position: "relative",
+    width: "90%",
   },
   imageBackground: {
-    width: "100%",
+    position: "absolute",
+    opacity: 0.5,
+    top: 15,
+    left: 18,
+    right: 0,
+    bottom: 0,
+  },
+  focused: {
+    borderWidth: 4,
+    borderColor: "red",
   },
 });
 

@@ -6,11 +6,12 @@ import {
   Button,
   TextInput,
   ImageBackground,
+  Image,
 } from "react-native";
 import { useState } from "react";
 
 const image = { uri: require("../assets/Background-Image.png") };
-const icon = { uri: require("../assets/icon.svg") };
+const icon = { uri: require("../assets/user-icon.png") };
 
 const Start = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -33,13 +34,14 @@ const Start = ({ navigation }) => {
           alignItems: "center",
         }}
       >
-        <View style={styles.textInputContainer}>
-          <TextInput
-            style={styles.textInput}
-            value={name}
-            onChangeText={setName}
-            placeholder="Your Name"
-          />
+        <View style={[styles.textInputContainer]}>
+          <Image style={styles.imageBackground} source={icon} />
+          {/* <TextInput
+              style={styles.textInput}
+              value={name}
+              onChangeText={setName}
+              placeholder="Your Name"
+            /> */}
         </View>
 
         <View
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 600,
     color: "#FFFFFF",
-    // textAlign: "center",
+    textAlign: "center",
     padding: 20,
   },
   chooseBGColor: {
@@ -161,6 +163,9 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flexDirection: "row",
     paddingBottom: 10,
+  },
+  imageBackground: {
+    width: "100%",
   },
 });
 

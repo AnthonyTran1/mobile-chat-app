@@ -4,13 +4,21 @@ import {
   Text,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
+  Alert,
 } from "react-native";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
-  const { name, backgroundColor } = route.params;
+  const { name, backgroundColor, userID } = route.params;
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -18,29 +26,23 @@ const Chat = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: "Hello developer",
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-      {
-        _id: 2,
-        text: "This is a system message",
-        createdAt: new Date(),
-        system: true,
-      },
-    ]);
+    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
+    const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
+      let newLists = [];
+      documentsSnapshot.forEach((doc) => {
+        newLists.push({ id: doc.id, ...doc.data() });
+      });
+      setMessages(newLists);
+    });
+
+    // Clean up code
+    return () => {
+      if (unsubMessages) unsubMessages();
+    };
   }, []);
+
   const onSend = (newMessages) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, newMessages)
-    );
+    addDoc(collection(db, "messages"), newMessages[0]);
   };
   const renderBubble = (props) => {
     return (
@@ -67,9 +69,13 @@ const Chat = ({ route, navigation }) => {
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
-        onSend={(messages) => onSend(messages)}
+        onSend={(messages) => {
+          onSend(messages);
+          Keyboard.dismiss();
+        }}
         user={{
-          _id: 1,
+          _id: userID,
+          name: name,
         }}
       />
       {Platform.OS === "android" ? (

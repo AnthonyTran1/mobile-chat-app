@@ -13,14 +13,14 @@ import {
   onSnapshot,
   query,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { useState, useEffect } from "react";
 import { Bubble, GiftedChat } from "react-native-gifted-chat";
 
-const Chat = ({ route, navigation }) => {
+const Chat = ({ route, navigation, db }) => {
   const { name, backgroundColor, userID } = route.params;
   const [messages, setMessages] = useState([]);
-
   useEffect(() => {
     navigation.setOptions({ title: name });
   }, []);
@@ -30,7 +30,12 @@ const Chat = ({ route, navigation }) => {
     const unsubMessages = onSnapshot(q, (documentsSnapshot) => {
       let newLists = [];
       documentsSnapshot.forEach((doc) => {
-        newLists.push({ id: doc.id, ...doc.data() });
+        // console.log(new Date(doc.data().createdAt.seconds * 1000));
+        newLists.push({
+          ...doc.data(),
+          id: doc.id,
+          createdAt: new Date(doc.data().createdAt.seconds * 1000),
+        });
       });
       setMessages(newLists);
     });

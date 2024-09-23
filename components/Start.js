@@ -7,30 +7,31 @@ import {
   TextInput,
   ImageBackground,
   Image,
+  Alert,
 } from "react-native";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { useState } from "react";
 
 const image = { uri: require("../assets/Background-Image.png") };
 const icon = require("../assets/user-icon.png");
-const auth = getAuth();
-
-const signInUser = () => {
-  signInAnonymously(auth)
-    .then((result) => {
-      navigation.navigate("Chat", {
-        name: name,
-        backgroundColor: backgroundColor,
-        userID: result.user.uid,
-      });
-      Alert.alert("Signed in Successfully!");
-    })
-    .catch((error) => {
-      Alert.alert("Unable to sign in, try later again.");
-    });
-};
 
 const Start = ({ navigation }) => {
+  const auth = getAuth();
+
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then((result) => {
+        navigation.navigate("Chat", {
+          name: name,
+          backgroundColor: backgroundColor,
+          userID: result.user.uid,
+        });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try later again.");
+      });
+  };
   const [name, setName] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#090C08");
   const [selectedColor, setSelectedColor] = useState();

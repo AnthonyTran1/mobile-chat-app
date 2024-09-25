@@ -97,22 +97,19 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     <View
       style={[styles.container, (styles.backgroundColor = { backgroundColor })]}
     >
-      {isConnected === true ? (
-        <GiftedChat
-          messages={messages}
-          renderBubble={renderBubble}
-          onSend={(messages) => {
-            onSend(messages);
-            Keyboard.dismiss();
-          }}
-          user={{
-            _id: userID,
-            name: name,
-          }}
-        />
-      ) : (
-        renderInputToolbar
-      )}
+      <GiftedChat
+        messages={messages}
+        renderBubble={renderBubble}
+        renderInputToolbar={renderInputToolbar}
+        onSend={(messages) => {
+          onSend(messages);
+          Keyboard.dismiss();
+        }}
+        user={{
+          _id: userID,
+          name: name,
+        }}
+      />
 
       {Platform.OS === "android" ? (
         <KeyboardAvoidingView behavior="height" />

@@ -3,20 +3,21 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import { StyleSheet, Text, View, LogBox, Alert } from "react-native";
-
 import Start from "./components/Start";
 import Chat from "./components/Chat";
-// Create the navigator
-const Stack = createNativeStackNavigator();
-
 import { initializeApp } from "firebase/app";
 import {
   getFirestore,
   disableNetwork,
   enableNetwork,
 } from "firebase/firestore";
-
 import { useNetInfo } from "@react-native-community/netinfo";
+import { getStorage } from "firebase/storage";
+
+// Create the navigator
+const Stack = createNativeStackNavigator();
+
+LogBox.ignoreLogs(["AsyncStorage has been extracted from"]);
 
 export default function App() {
   // Your web app's Firebase configuration
@@ -45,6 +46,8 @@ export default function App() {
     }
   }, [connectionStatus.isConnected]);
 
+  const storage = getStorage(app);
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Start">
@@ -54,6 +57,7 @@ export default function App() {
             <Chat
               isConnected={connectionStatus.isConnected}
               db={db}
+              storage={storage}
               {...props}
             />
           )}

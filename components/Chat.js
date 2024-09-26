@@ -16,10 +16,17 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { useState, useEffect } from "react";
-import { Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
+import {
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+  renderCustomActions,
+} from "react-native-gifted-chat";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MapView from "react-native-maps";
+import CustomActions from "./CustomActions";
 
-const Chat = ({ route, navigation, db, isConnected }) => {
+const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { name, backgroundColor, userID } = route.params;
   const [messages, setMessages] = useState([]);
   useEffect(() => {
@@ -77,6 +84,7 @@ const Chat = ({ route, navigation, db, isConnected }) => {
   const onSend = (newMessages) => {
     addDoc(collection(db, "messages"), newMessages[0]);
   };
+
   const renderBubble = (props) => {
     return (
       <Bubble
@@ -93,6 +101,28 @@ const Chat = ({ route, navigation, db, isConnected }) => {
     );
   };
 
+  const renderCustomActions = (props) => {
+    return <CustomActions onSend={onSend} storage={storage} {...props} />;
+  };
+
+  const renderCustomView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <View
       style={[styles.container, (styles.backgroundColor = { backgroundColor })]}
@@ -105,6 +135,8 @@ const Chat = ({ route, navigation, db, isConnected }) => {
           onSend(messages);
           Keyboard.dismiss();
         }}
+        renderActions={renderCustomActions}
+        renderCustomView={renderCustomView}
         user={{
           _id: userID,
           name: name,

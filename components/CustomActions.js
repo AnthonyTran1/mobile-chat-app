@@ -3,6 +3,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useState } from "react";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const CustomActions = ({
   wrapperStyle,
@@ -52,7 +53,19 @@ const CustomActions = ({
     const blob = await response.blob();
     uploadBytes(newUploadRef, blob).then(async (snapshot) => {
       const imageURL = await getDownloadURL(snapshot.ref);
-      onSend({ image: imageURL });
+      // Send the full message object with the image
+      onSend([
+        {
+          createdAt: new Date(),
+          _id: `${userID}-${new Date().getTime()}`,
+          // Generate a unique ID
+          user: {
+            _id: userID,
+            name: name,
+          },
+          image: imageURL,
+        },
+      ]);
     });
   };
 
@@ -79,17 +92,20 @@ const CustomActions = ({
     if (permissions?.granted) {
       const location = await Location.getCurrentPositionAsync({});
       if (location) {
-        onSend({
-          createdAt: new Date(),
-          user: {
-            _id: userID,
-            name: name,
+        onSend([
+          {
+            _id: `${userID}-${new Date().getTime()}`,
+            createdAt: new Date(),
+            user: {
+              _id: userID,
+              name: name,
+            },
+            location: {
+              longitude: location.coords.longitude,
+              latitude: location.coords.latitude,
+            },
           },
-          location: {
-            longitude: location.coords.longitude,
-            latitude: location.coords.latitude,
-          },
-        });
+        ]);
       } else Alert.alert("Error occurred while fetching location");
     } else Alert.alert("Permissions haven't been granted.");
   };

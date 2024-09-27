@@ -4,7 +4,14 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useState } from "react";
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
+const CustomActions = ({
+  wrapperStyle,
+  iconTextStyle,
+  onSend,
+  storage,
+  name,
+  userID,
+}) => {
   const [image, setImage] = useState(null);
   const [location, setLocation] = useState(null);
   const actionSheet = useActionSheet();
@@ -73,6 +80,11 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage }) => {
       const location = await Location.getCurrentPositionAsync({});
       if (location) {
         onSend({
+          createdAt: new Date(),
+          user: {
+            _id: userID,
+            name: name,
+          },
           location: {
             longitude: location.coords.longitude,
             latitude: location.coords.latitude,
